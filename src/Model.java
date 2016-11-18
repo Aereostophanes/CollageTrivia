@@ -1,8 +1,3 @@
-/**
- * Created by aereostophanes on 11/11/16.
- */
-import java.io.*;
-
 public class Model {
     private Score score;
     private Category[] categories;

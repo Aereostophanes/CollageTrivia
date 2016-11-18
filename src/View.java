@@ -1,5 +1,3 @@
-import com.sun.tools.internal.jxc.ap.Const;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

@@ -1,7 +1,3 @@
-/**
- * Created by aereostophanes on 11/11/16.
- */
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Random;
