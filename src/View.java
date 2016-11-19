@@ -263,12 +263,16 @@ public class View extends JFrame {
                 data[row][2] = "SCORE";
             } else if (row == data.length - 1) {
                 data[row][0] = "Your Total Score Is:";
-                data[row][1] = Integer.toString(this.model.getScore().getScore());
-                data[row][2] = "  : - ) ";
+                data[row][1] = Integer.toString(model.getScore().getScore());
+                if (model.getScore().getScore() >= Constants.THRESHOLD) {
+                    data[row][2] = "  : - ) ";
+                } else {
+                    data[row][2] = "  : - ( ";
+                }
             } else {
                 data[row][0] = Integer.toString(count + 1);
-                data[row][1] = this.model.getCurrentCategory().getQuestions()[count].getQuestion();
-                data[row][2] = Integer.toString(this.model.getScore().getScoreArray().get(count));
+                data[row][1] = model.getCurrentCategory().getQuestions()[count].getQuestion();
+                data[row][2] = Integer.toString(model.getScore().getScoreArray().get(count));
                 count++;
             }
 

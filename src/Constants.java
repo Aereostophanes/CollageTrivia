@@ -7,12 +7,14 @@ public class Constants {
     public static int NUM_QUESTIONS = 25;
     // Number of questions - random
     public static int NUM_QUESTIONS_RANDOM = 100;
+    // Average score threshold
+    public static int THRESHOLD = 70;
     // Number of answers
     public static int NUM_ANSWERS = 4;
     // Number of categories
     public static int NUM_CATEGORIES = 6;
     // Path to the src directory
-    public static String PATH = System.getProperty("user.dir") + "/src/";
+    public static String PATH = System.getProperty("user.dir") + "/src/Resources/";
     // Categories
     public static String RANDOM = "Random";
     public static String DISNEY = "Disney";
