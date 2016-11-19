@@ -44,6 +44,8 @@ public class Category {
         return questions[current];
     }
 
+    public Question[] getQuestions() { return questions; }
+
     public int getCurrent() { return current; }
 
     public String getCategory() {

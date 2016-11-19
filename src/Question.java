@@ -15,7 +15,6 @@ public class Question {
                 answers[i] = new Answer(a[i], false);
             }
         }
-
         randomizeAnswers();
     }
 

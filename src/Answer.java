@@ -18,7 +18,6 @@ public class Answer extends JButton {
         setForeground(Color.BLACK);
         setFocusPainted(false);
         setBorderPainted(false);
-        //setOpaque(true);
     }
 
 
@@ -26,5 +25,5 @@ public class Answer extends JButton {
         return answer;
     }
 
-    public boolean getIsCorrect() { return isCorrect; }
+    public boolean isCorrect() { return isCorrect; }
 }

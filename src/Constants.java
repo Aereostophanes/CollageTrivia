@@ -26,7 +26,10 @@ public class Constants {
         START,
         SETTINGS,
         LEADERBOARD,
-        CATEGORY
+        CATEGORY,
+        USERNAME,
+        HOME,
+        DISABLE
     }
     // Categories enum
     public static enum CATEGORIES {
@@ -42,7 +45,14 @@ public class Constants {
     // Rows and cols
     public static int ROWS = 7;
     public static int COLS = 1;
-    // SIze
+    // Size
     public static int WIDTH = 1000;
     public static int HEIGHT = 800;
+    // Table size
+    public static int QUESTION_NUM_WIDTH = 200;
+    public static int QUESTION_WIDTH = 700;
+    public static int SCORE_WIDTH = 50;
+    public static int ROW_HEIGHT = 30;
+    public static int TABLE_ROWS = 12;
+    public static int TABLE_COLS = 3;
 }

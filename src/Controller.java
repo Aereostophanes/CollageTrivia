@@ -18,9 +18,19 @@ public class Controller implements ActionListener {
         } else if (e.getActionCommand().equals(Constants.ACTIONS.LEADERBOARD.name())) {
 
         } else if (e.getActionCommand().equals(Constants.ACTIONS.SETTINGS.name())) {
-            //view.print("SETTINGS");
+            if (view.isTimerDisabled()) {
+                view.settings("Enable Timer");
+            } else {
+                view.settings("Disable Timer");
+            }
         } else if (e.getActionCommand().equals(Constants.ACTIONS.START.name())) {
             view.initializeCategories();
+        } else if (e.getActionCommand().equals(Constants.ACTIONS.USERNAME.name())) {
+            view.usernameScreen();
+        } else if (e.getActionCommand().equals(Constants.ACTIONS.HOME.name())) {
+            view.initialize();
+        } else if(e.getActionCommand().equals(Constants.ACTIONS.DISABLE.name())) {
+            view.disableTimer();
         }
     }
 }

@@ -11,45 +11,64 @@ public class View extends JFrame {
     private int time;
     private int progress;
     private JProgressBar progressBar;
+    public boolean disabled = false;
 
     public View() {
         controller = new Controller(this);
         initialize();
-        timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (time == 0) {
-                    Answer[] answers = model.getCurrentCategory().getCurrentQuestion().getAnswers();
-                    Answer answer = answers[0];
-                    for (Answer a : model.getCurrentCategory().getCurrentQuestion().getAnswers()) {
-                        if (!a.getIsCorrect()) {
-                            answer = a;
-                            break;
+        if (!disabled) {
+            timer = new Timer(1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (time == 1) {
+                        Answer[] answers = model.getCurrentCategory().getCurrentQuestion().getAnswers();
+                        Answer answer = answers[0];
+                        for (Answer a : model.getCurrentCategory().getCurrentQuestion().getAnswers()) {
+                            if (!a.isCorrect()) {
+                                answer = a;
+                                break;
+                            }
                         }
-                    }
-                    goToNextQuestion(answer);
-                } else {
-                    time -= 1;
-                    Component[] components = screen.getComponents();
-                    for (Component c : components) {
-                        if (c instanceof GameTime) {
-                            screen.remove(c);
-                            break;
+                        goToNextQuestion(answer);
+                    } else {
+                        time -= 1;
+                        model.getScore().setTimerScore(time);
+
+                        Component[] components = screen.getComponents();
+                        for (Component c : components) {
+                            if (c instanceof GameTime) {
+                                screen.remove(c);
+                                break;
+                            }
                         }
+                        screen.add(new GameTime(Integer.toString(time), JLabel.CENTER));
+                        getContentPane().removeAll();
+                        getContentPane().add(screen);
+                        revalidate();
                     }
-                    screen.add(new GameTime(Integer.toString(time), JLabel.CENTER));
-                    getContentPane().removeAll();
-                    getContentPane().add(screen);
-                    revalidate();
+                }
+            });
+        } else {
+            Answer[] answers = model.getCurrentCategory().getCurrentQuestion().getAnswers();
+            Answer answer = answers[0];
+            for (Answer a : model.getCurrentCategory().getCurrentQuestion().getAnswers()) {
+                if (!a.isCorrect()) {
+                    answer = a;
+                    break;
                 }
             }
-        });
+            goToNextQuestion(answer);
+            getContentPane().removeAll();
+            getContentPane().add(screen);
+            revalidate();
+
+        }
     }
 
-    public Model getModel() { return model; }
+    public boolean isTimerDisabled() { return disabled; }
 
     public void initialize() {
-        time = Constants.MAX_TIME;
+        time = Constants.MAX_TIME + 1;
         progress = 0;
         screen = new JPanel();
         progressBar = new JProgressBar();
@@ -69,13 +88,56 @@ public class View extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(Constants.WIDTH, Constants.HEIGHT);
 
-        add(screen);
-        setVisible(true);
+        getContentPane().removeAll();
+        getContentPane().add(screen);
+        revalidate();
 
-        if (timer != null) {
-            timer.stop();
-            time = Constants.MAX_TIME;
+        if (!isShowing()) {
+            add(screen);
+            setVisible(true);
+
+            if (timer != null) {
+                timer.stop();
+                time = Constants.MAX_TIME;
+            }
         }
+    }
+
+    public void settings(String action) {
+        screen = new JPanel();
+        JButton home = new JButton("Back");
+        home.setActionCommand(Constants.ACTIONS.HOME.name());
+        home.addActionListener(controller);
+        JButton time = new JButton(action);
+
+        time.setActionCommand(Constants.ACTIONS.DISABLE.name());
+        time.addActionListener(controller);
+
+        screen.add(home);
+        screen.add(time);
+
+        setTitle("Settings!");
+
+        getContentPane().removeAll();
+        getContentPane().add(screen);
+        revalidate();
+    }
+
+    public void disableTimer() {
+        if (!disabled) {
+            disabled = true;
+            settings("Enable Timer");
+            JLabel label = new JLabel("Timer disabled.");
+            screen.add(label);
+        } else {
+            disabled = false;
+            settings("Disable Timer");
+            JLabel label = new JLabel("Timer enabled.");
+            screen.add(label);
+        }
+        getContentPane().removeAll();
+        getContentPane().add(screen);
+        revalidate();
     }
 
     public void initializeCategories() {
@@ -94,8 +156,8 @@ public class View extends JFrame {
 
     public void startGame(String s) {
         int categoryIndex = 0;
-
         screen = new JPanel(new GridLayout(Constants.ROWS, Constants.COLS, 2, 2));
+
         if (s.equals(Constants.DISNEY)) {
             categoryIndex = Constants.CATEGORIES.DISNEY.getValue();
         } else if (s.equals(Constants.MANGA)) {
@@ -124,7 +186,8 @@ public class View extends JFrame {
 
         screen.add(progressBar);
         screen.add(new GameTime(Integer.toString(Constants.MAX_TIME), JLabel.CENTER));
-        timer.start();
+
+        if (!disabled) timer.start();
 
         getContentPane().removeAll();
         getContentPane().add(screen);
@@ -132,11 +195,23 @@ public class View extends JFrame {
     }
 
     public void goToNextQuestion(Answer answer) {
-        if (answer.getIsCorrect()) model.getScore().updateScore();
+        if (answer.isCorrect()) {
+            if (!disabled) {
+                int current_score = model.getScore().getTimerScore();
+                model.getScore().updateScore(current_score);
+                model.getScore().updateCounter(current_score);
+            } else {
+                model.getScore().updateScore(10);
+                model.getScore().updateCounter(10);
+            }
+            model.getScore().setTimerScore(10);
+        } else {
+            model.getScore().updateCounter(0);
+            model.getScore().setTimerScore(10);
+        }
 
         if (model.getCurrentCategory().getCurrent() == Constants.NUM_QUESTIONS_ROUND - 1) {
-            System.out.println("The score is: " + model.getScore().getScore());
-            initialize();
+            displayScoreTable();
             getContentPane().removeAll();
             getContentPane().add(screen);
             revalidate();
@@ -159,12 +234,79 @@ public class View extends JFrame {
             progressBar.setValue(progress);
             screen.add(progressBar);
             screen.add(new GameTime(Integer.toString(Constants.MAX_TIME), JLabel.CENTER));
-            timer.restart();
+
+            if (!disabled) timer.restart();
 
             getContentPane().removeAll();
             getContentPane().add(screen);
             revalidate();
         }
+    }
+
+    public void displayScoreTable() {
+        screen = new JPanel(new FlowLayout());
+
+        if (timer != null) {
+            timer.stop();
+            time = Constants.MAX_TIME;
+        }
+
+        String[][] data = new String[Constants.TABLE_ROWS][Constants.TABLE_COLS];
+        String[] col = new String[]{"Question Number", "Question", "Score"};
+        JTable table = new JTable(data, col);
+        int count = 0;
+
+        for (int row = 0; row < data.length; row++) {
+            if (row == 0) {
+                data[row][0] = "#";
+                data[row][1] = "QUESTION";
+                data[row][2] = "SCORE";
+            } else if (row == data.length - 1) {
+                data[row][0] = "Your Total Score Is:";
+                data[row][1] = Integer.toString(this.model.getScore().getScore());
+                data[row][2] = "  : - ) ";
+            } else {
+                data[row][0] = Integer.toString(count + 1);
+                data[row][1] = this.model.getCurrentCategory().getQuestions()[count].getQuestion();
+                data[row][2] = Integer.toString(this.model.getScore().getScoreArray().get(count));
+                count++;
+            }
+
+            table.getColumnModel().getColumn(0).setPreferredWidth(Constants.QUESTION_NUM_WIDTH);
+            table.getColumnModel().getColumn(1).setPreferredWidth(Constants.QUESTION_WIDTH);
+            table.getColumnModel().getColumn(2).setPreferredWidth(Constants.SCORE_WIDTH);
+            table.setRowHeight(row, Constants.ROW_HEIGHT);
+        }
+        table.setShowHorizontalLines(true);
+        table.setShowVerticalLines(true);
+        table.setGridColor(Color.PINK);
+
+        JButton back = new JButton("Back");
+        back.setActionCommand(Constants.ACTIONS.HOME.name());
+        back.addActionListener(controller);
+
+        JButton username = new JButton("Add Score to Leadership Board");
+        username.setActionCommand(Constants.ACTIONS.USERNAME.name());
+        username.addActionListener(controller);
+
+        screen.add(table);
+        screen.add(back);
+        screen.add(username);
+    }
+
+    public void usernameScreen() {
+        screen = new JPanel(new FlowLayout());
+        String username;
+        JTextField usertext = new JTextField(6);
+        JButton addscore = new JButton("Add My Score");
+        addscore.setActionCommand(Constants.ACTIONS.LEADERBOARD.name());
+        addscore.addActionListener(controller);
+        screen.add(usertext);
+        screen.add(addscore);
+        username = usertext.getText();
+        getContentPane().removeAll();
+        getContentPane().add(screen);
+        revalidate();
     }
 
     public static void main(String[] args) { View v = new View(); }
