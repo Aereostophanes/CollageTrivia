@@ -26,7 +26,7 @@ public class Controller implements ActionListener {
         } else if (e.getActionCommand().equals(Constants.ACTIONS.START.name())) {
             view.initializeCategories();
         } else if (e.getActionCommand().equals(Constants.ACTIONS.USERNAME.name())) {
-            view.usernameScreen();
+            view.userNameScreen();
         } else if (e.getActionCommand().equals(Constants.ACTIONS.HOME.name())) {
             view.initialize();
         } else if(e.getActionCommand().equals(Constants.ACTIONS.DISABLE.name())) {

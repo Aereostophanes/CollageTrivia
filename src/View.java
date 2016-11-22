@@ -21,15 +21,7 @@ public class View extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (time == 1) {
-                        Answer[] answers = model.getCurrentCategory().getCurrentQuestion().getAnswers();
-                        Answer answer = answers[0];
-                        for (Answer a : model.getCurrentCategory().getCurrentQuestion().getAnswers()) {
-                            if (!a.isCorrect()) {
-                                answer = a;
-                                break;
-                            }
-                        }
-                        goToNextQuestion(answer);
+                        goToNextQuestion(new Answer("", false));
                     } else {
                         time -= 1;
                         model.getScore().setTimerScore(time);
@@ -41,7 +33,17 @@ public class View extends JFrame {
                                 break;
                             }
                         }
-                        screen.add(new GameTime(Integer.toString(time), JLabel.CENTER));
+
+                        GameTime timeLabel = new GameTime(Integer.toString(time), JLabel.CENTER);
+                        if (time <= 3) {
+                            timeLabel.setForeground(Color.RED);
+                        } else if (time <= 7) {
+                            timeLabel.setForeground(Color.YELLOW);
+                        } else {
+                            timeLabel.setForeground(Color.GREEN);
+                        }
+                        screen.add(timeLabel);
+
                         getContentPane().removeAll();
                         getContentPane().add(screen);
                         revalidate();
@@ -61,11 +63,12 @@ public class View extends JFrame {
             getContentPane().removeAll();
             getContentPane().add(screen);
             revalidate();
-
         }
     }
 
     public boolean isTimerDisabled() { return disabled; }
+
+    public Model getModel() { return model; }
 
     public void initialize() {
         time = Constants.MAX_TIME + 1;
@@ -185,7 +188,9 @@ public class View extends JFrame {
         }
 
         screen.add(progressBar);
-        screen.add(new GameTime(Integer.toString(Constants.MAX_TIME), JLabel.CENTER));
+        GameTime timeLabel = new GameTime(Integer.toString(Constants.MAX_TIME), JLabel.CENTER);
+        timeLabel.setForeground(Color.GREEN);
+        screen.add(timeLabel);
 
         if (!disabled) timer.start();
 
@@ -233,7 +238,16 @@ public class View extends JFrame {
             progress += (100 / Constants.NUM_QUESTIONS_ROUND);
             progressBar.setValue(progress);
             screen.add(progressBar);
-            screen.add(new GameTime(Integer.toString(Constants.MAX_TIME), JLabel.CENTER));
+
+            GameTime timeLabel = new GameTime(Integer.toString(Constants.MAX_TIME), JLabel.CENTER);
+            if (time <= 3) {
+                timeLabel.setForeground(Color.RED);
+            } else if (time <= 7) {
+                timeLabel.setForeground(Color.YELLOW);
+            } else {
+                timeLabel.setForeground(Color.GREEN);
+            }
+            screen.add(timeLabel);
 
             if (!disabled) timer.restart();
 
@@ -289,25 +303,25 @@ public class View extends JFrame {
         back.setActionCommand(Constants.ACTIONS.HOME.name());
         back.addActionListener(controller);
 
-        JButton username = new JButton("Add Score to Leadership Board");
-        username.setActionCommand(Constants.ACTIONS.USERNAME.name());
-        username.addActionListener(controller);
+        JButton userName = new JButton("Add Score to Leadership Board");
+        userName.setActionCommand(Constants.ACTIONS.USERNAME.name());
+        userName.addActionListener(controller);
 
         screen.add(table);
         screen.add(back);
-        screen.add(username);
+        screen.add(userName);
     }
 
-    public void usernameScreen() {
+    public void userNameScreen() {
         screen = new JPanel(new FlowLayout());
-        String username;
+        String userName;
         JTextField usertext = new JTextField(6);
         JButton addscore = new JButton("Add My Score");
         addscore.setActionCommand(Constants.ACTIONS.LEADERBOARD.name());
         addscore.addActionListener(controller);
         screen.add(usertext);
         screen.add(addscore);
-        username = usertext.getText();
+        userName = usertext.getText();
         getContentPane().removeAll();
         getContentPane().add(screen);
         revalidate();
