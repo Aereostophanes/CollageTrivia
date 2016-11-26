@@ -1,9 +1,9 @@
-public class Model {
+class Model {
     private Score score;
     private Category[] categories;
     private int current;
 
-    public Model(int c) {
+    Model(int c) {
         score = new Score();
         categories = new Category[Constants.NUM_CATEGORIES];
         current = c;
@@ -14,7 +14,7 @@ public class Model {
         }
     }
 
-    public Score getScore() { return score; }
+    Score getScore() { return score; }
 
-    public Category getCurrentCategory() { return categories[current]; }
+    Category getCurrentCategory() { return categories[current]; }
 }

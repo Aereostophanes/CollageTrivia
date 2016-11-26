@@ -2,13 +2,13 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Random;
 
-public class Category {
+class Category {
     private String category;
     private Question[] questions;
     private int questionLength;
     private int current;
 
-    public Category(String c) {
+    Category(String c) {
         category = c;
         current = 0;
         questionLength = c.equals(Constants.RANDOM) ? Constants.NUM_QUESTIONS_RANDOM : Constants.NUM_QUESTIONS;
@@ -40,15 +40,15 @@ public class Category {
         randomizeQuestions();
     }
 
-    public Question getCurrentQuestion() {
+    Question getCurrentQuestion() {
         return questions[current];
     }
 
-    public Question[] getQuestions() { return questions; }
+    Question[] getQuestions() { return questions; }
 
-    public int getCurrent() { return current; }
+    int getCurrent() { return current; }
 
-    public String getCategory() {
+    String getCategory() {
         return category;
     }
 
@@ -56,11 +56,11 @@ public class Category {
         return questionLength;
     }
 
-    public void nextQuestion() {
+    void nextQuestion() {
         current++;
     }
 
-    public void randomizeQuestions() {
+    private void randomizeQuestions() {
         Random rand = new Random();
         int end = questionLength - 1;
 

@@ -2,10 +2,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
-public class Controller implements ActionListener {
+class Controller implements ActionListener {
     private View view;
 
-    public Controller(View v) {
+    Controller(View v) {
         view = v;
     }
     @Override
@@ -31,6 +31,8 @@ public class Controller implements ActionListener {
             view.initialize();
         } else if(e.getActionCommand().equals(Constants.ACTIONS.DISABLE.name())) {
             view.disableTimer();
+        } else if (e.getActionCommand().equals(Constants.ACTIONS.ADD_SCORE.name())) {
+            view.addScore();
         }
     }
 }

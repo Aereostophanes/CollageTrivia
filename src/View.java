@@ -2,6 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class View extends JFrame {
     private Model model;
@@ -11,9 +17,33 @@ public class View extends JFrame {
     private int time;
     private int progress;
     private JProgressBar progressBar;
-    public boolean disabled = false;
+    private String userName;
+    private boolean disabled = false;
+    private Leaderboard leaderBoard;
 
-    public View() {
+    private View() {
+        leaderBoard = new Leaderboard();
+        try (
+                InputStream fis = new FileInputStream("Leaderboard.txt");
+                InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            String name = br.readLine();
+            String score = br.readLine();
+            String category = br.readLine();
+
+            while (name != null && score != null && category != null) {
+                User u = new User(Integer.parseInt(score), name, category);
+                leaderBoard.addUser(u);
+
+                name = br.readLine();
+                score = br.readLine();
+                category = br.readLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
+
         controller = new Controller(this);
         initialize();
         if (!disabled) {
@@ -66,11 +96,12 @@ public class View extends JFrame {
         }
     }
 
-    public boolean isTimerDisabled() { return disabled; }
+    boolean isTimerDisabled() { return disabled; }
 
     public Model getModel() { return model; }
 
-    public void initialize() {
+    void initialize() {
+        userName = "";
         time = Constants.MAX_TIME + 1;
         progress = 0;
         screen = new JPanel();
@@ -88,7 +119,7 @@ public class View extends JFrame {
         screen.add(settings);
 
         setTitle("Collage!");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(Constants.WIDTH, Constants.HEIGHT);
 
         getContentPane().removeAll();
@@ -106,7 +137,7 @@ public class View extends JFrame {
         }
     }
 
-    public void settings(String action) {
+    void settings(String action) {
         screen = new JPanel();
         JButton home = new JButton("Back");
         home.setActionCommand(Constants.ACTIONS.HOME.name());
@@ -126,7 +157,7 @@ public class View extends JFrame {
         revalidate();
     }
 
-    public void disableTimer() {
+    void disableTimer() {
         if (!disabled) {
             disabled = true;
             settings("Enable Timer");
@@ -143,7 +174,7 @@ public class View extends JFrame {
         revalidate();
     }
 
-    public void initializeCategories() {
+    void initializeCategories() {
         screen = new JPanel();
         JButton[] categories = new JButton[Constants.NUM_CATEGORIES];
         for (int i = 0; i < Constants.NUM_CATEGORIES; i++) {
@@ -157,7 +188,7 @@ public class View extends JFrame {
         revalidate();
     }
 
-    public void startGame(String s) {
+    void startGame(String s) {
         int categoryIndex = 0;
         screen = new JPanel(new GridLayout(Constants.ROWS, Constants.COLS, 2, 2));
 
@@ -199,7 +230,7 @@ public class View extends JFrame {
         revalidate();
     }
 
-    public void goToNextQuestion(Answer answer) {
+    void goToNextQuestion(Answer answer) {
         if (answer.isCorrect()) {
             if (!disabled) {
                 int current_score = model.getScore().getTimerScore();
@@ -257,7 +288,7 @@ public class View extends JFrame {
         }
     }
 
-    public void displayScoreTable() {
+    private void displayScoreTable() {
         screen = new JPanel(new FlowLayout());
 
         if (timer != null) {
@@ -312,25 +343,93 @@ public class View extends JFrame {
         screen.add(userName);
     }
 
-    public void userNameScreen() {
+    void userNameScreen() {
         screen = new JPanel(new FlowLayout());
-        String userName;
-        JTextField usertext = new JTextField(6);
-        JButton addscore = new JButton("Add My Score");
-        addscore.setActionCommand(Constants.ACTIONS.LEADERBOARD.name());
-        addscore.addActionListener(controller);
-        screen.add(usertext);
-        screen.add(addscore);
-        userName = usertext.getText();
+        JTextField userText = new JTextField(6);
+        JButton addUserScore = new JButton("Add My Score");
+        addUserScore.setActionCommand(Constants.ACTIONS.ADD_SCORE.name());
+        addUserScore.addActionListener(controller);
+        screen.add(userText);
+        screen.add(addUserScore);
         getContentPane().removeAll();
         getContentPane().add(screen);
         revalidate();
     }
 
+    void addScore() {
+        ArrayList<String> lines = new ArrayList<>();
+        try (
+                InputStream fis = new FileInputStream("Leaderboard.txt");
+                InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            String name = br.readLine();
+            String score = br.readLine();
+            String category = br.readLine();
+
+            while (name != null && score != null && category != null) {
+                lines.add(name);
+                lines.add(score);
+                lines.add(category);
+
+                name = br.readLine();
+                score = br.readLine();
+                category = br.readLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
+        try {
+            int userScore = model.getScore().getScore();
+            String userCategory = model.getCurrentCategory().getCategory();
+
+            Component[] components = screen.getComponents();
+            for (Component c : components) {
+                if (c instanceof JTextField) {
+                    userName = ((JTextField) c).getText();
+                    break;
+                }
+            }
+
+            User u = new User(userScore, userName, userCategory);
+            leaderBoard.addUser(u);
+
+            lines.add(userName);
+            lines.add(Integer.toString(userScore));
+            lines.add(userCategory);
+
+            Path file = Paths.get("Leaderboard.txt");
+            Files.write(file, lines, Charset.forName("UTF-8"));
+        } catch (IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
+
+        screen = new JPanel();
+
+        JButton home = new JButton("Back");
+        home.setActionCommand(Constants.ACTIONS.HOME.name());
+        home.addActionListener(controller);
+
+        JLabel scoreAdded = new JLabel("Your score has been added to the leaderboard!");
+
+        screen.add(home);
+        screen.add(scoreAdded);
+
+        getContentPane().removeAll();
+        getContentPane().add(screen);
+        revalidate();
+
+        for (String s : leaderBoard.getLeaderBoard().keySet()) {
+            for (User u : leaderBoard.getUsersByCategory(s)) {
+                System.out.println(u.getUserName() + " " + u.getUserScore() + " " + u.getUserCategory());
+            }
+        }
+    }
+
     public static void main(String[] args) { View v = new View(); }
 
-    class GameTime extends JLabel {
-        public GameTime(String t, int position) {
+    private class GameTime extends JLabel {
+        GameTime(String t, int position) {
             super(t, position);
         }
     }

@@ -1,11 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Answer extends JButton {
+class Answer extends JButton {
     private String answer;
     private boolean isCorrect;
 
-    public Answer(String a, boolean c) {
+    Answer(String a, boolean c) {
         answer = a;
         isCorrect = c;
 
@@ -25,5 +25,5 @@ public class Answer extends JButton {
         return answer;
     }
 
-    public boolean isCorrect() { return isCorrect; }
+    boolean isCorrect() { return isCorrect; }
 }

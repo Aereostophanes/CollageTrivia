@@ -1,10 +1,10 @@
 import java.util.Random;
 
-public class Question {
+class Question {
     private String question;
     private Answer[] answers;
 
-    public Question(String q, String[] a) {
+    Question(String q, String[] a) {
         question = q;
         answers = new Answer[Constants.NUM_ANSWERS];
 
@@ -18,15 +18,15 @@ public class Question {
         randomizeAnswers();
     }
 
-    public String getQuestion() {
+    String getQuestion() {
         return question;
     }
 
-    public Answer[] getAnswers() {
+    Answer[] getAnswers() {
         return answers;
     }
 
-    public void randomizeAnswers() {
+    private void randomizeAnswers() {
         Random rand = new Random();
         int end = Constants.NUM_ANSWERS - 1;
 
