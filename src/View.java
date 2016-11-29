@@ -132,13 +132,13 @@ public class View extends JFrame {
 
         setTitle("Collage!");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(Constants.WIDTH, Constants.HEIGHT);
 
         getContentPane().removeAll();
         getContentPane().add(screen);
         revalidate();
 
         if (!isShowing()) {
+            setSize(Constants.WIDTH, Constants.HEIGHT);
             add(screen);
             setVisible(true);
 
@@ -480,21 +480,21 @@ public class View extends JFrame {
                 break;
             default:
                 int size = category.equals("Overall") ? leaderBoard.getAllUsers().size() : leaderBoard.getUsersByCategory(category).size();
-                String[][] dataO = new String[Math.min(size, Constants.SIZE_USERS) + 1][2];
-                JTable tableO = new JTable(dataO, col);
+                String[][] data = new String[Math.min(size, Constants.SIZE_USERS) + 1][2];
+                JTable table = new JTable(data, col);
                 for (int i = 0; i <= Math.min(size, Constants.SIZE_USERS); i++) {
                     if (i == 0) {
-                        dataO[i][0] = "USERNAME";
-                        dataO[i][1] = "SCORE";
+                        data[i][0] = "USERNAME";
+                        data[i][1] = "SCORE";
                     } else {
-                        dataO[i][0] = category.equals("Overall") ? leaderBoard.getAllUsers().get(i - 1).getUserName() : leaderBoard.getUsersByCategory(category).get(i - 1).getUserName();
-                        dataO[i][1] = category.equals("Overall") ? Integer.toString(leaderBoard.getAllUsers().get(i - 1).getUserScore()) : Integer.toString(leaderBoard.getUsersByCategory(category).get(i - 1).getUserScore());
+                        data[i][0] = category.equals("Overall") ? leaderBoard.getAllUsers().get(i - 1).getUserName() : leaderBoard.getUsersByCategory(category).get(i - 1).getUserName();
+                        data[i][1] = category.equals("Overall") ? Integer.toString(leaderBoard.getAllUsers().get(i - 1).getUserScore()) : Integer.toString(leaderBoard.getUsersByCategory(category).get(i - 1).getUserScore());
                     }
                 }
-                tableO.getColumnModel().getColumn(0).setPreferredWidth(Constants.QUESTION_NUM_WIDTH);
-                tableO.getColumnModel().getColumn(1).setPreferredWidth(Constants.QUESTION_WIDTH);
-                tableO.setShowHorizontalLines(true);
-                tableO.setShowVerticalLines(true);
+                table.getColumnModel().getColumn(0).setPreferredWidth(Constants.QUESTION_NUM_WIDTH);
+                table.getColumnModel().getColumn(1).setPreferredWidth(Constants.QUESTION_WIDTH);
+                table.setShowHorizontalLines(true);
+                table.setShowVerticalLines(true);
 
                 Color color;
                 switch (category) {
@@ -520,11 +520,11 @@ public class View extends JFrame {
                         color = Color.WHITE;
                         break;
                 }
-                tableO.setGridColor(color);
+                table.setGridColor(color);
 
-                tableO.setBackground(Color.BLACK);
-                tableO.setForeground(Color.YELLOW);
-                screen.add(tableO);
+                table.setBackground(Color.BLACK);
+                table.setForeground(Color.YELLOW);
+                screen.add(table);
                 getContentPane().add(screen);
                 revalidate();
                 break;
