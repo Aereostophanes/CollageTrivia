@@ -8,7 +8,7 @@ class Model {
         categories = new Category[Constants.NUM_CATEGORIES];
         current = c;
 
-        String categoryNames[] = {Constants.DISNEY, Constants.MANGA, Constants.MUSIC, Constants.VEGAN, Constants.ANIMALS, Constants.RANDOM};
+        String categoryNames[] = { Constants.DISNEY, Constants.MANGA, Constants.MUSIC, Constants.VEGAN, Constants.ANIMALS, Constants.RANDOM };
         for (int i = 0; i < Constants.NUM_CATEGORIES; i++) {
             categories[i] = new Category(categoryNames[i]);
         }

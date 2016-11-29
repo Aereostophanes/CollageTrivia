@@ -16,7 +16,9 @@ class Controller implements ActionListener {
         } else if (e.getActionCommand().equals(Constants.ACTIONS.CATEGORY.name())) {
             view.startGame(b.getText());
         } else if (e.getActionCommand().equals(Constants.ACTIONS.LEADERBOARD.name())) {
-
+            view.leaderBoardScreen("Start");
+        } else if(e.getActionCommand().equals(Constants.ACTIONS.LEADERBOARD_CATEGORY.name())) {
+            view.leaderBoardScreen(b.getText());
         } else if (e.getActionCommand().equals(Constants.ACTIONS.SETTINGS.name())) {
             if (view.isTimerDisabled()) {
                 view.settings("Enable Timer");

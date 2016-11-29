@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -21,7 +20,7 @@ class Leaderboard {
 
     ArrayList<User> getUsersByCategory(String c) { return leaderBoard.get(c); }
 
-    public ArrayList<User> getAllUsers() {
+    ArrayList<User> getAllUsers() {
         ArrayList<User> users = new ArrayList<>();
 
         for (String s : Constants.CATEGORY_NAMES) {
@@ -29,6 +28,7 @@ class Leaderboard {
                 users.add(u);
             }
         }
+        Collections.sort(users, (o1, o2) -> o2.getUserScore() - o1.getUserScore());
 
         return users;
     }

@@ -1,6 +1,8 @@
 class Constants {
     // Number of questions in a round
     static int NUM_QUESTIONS_ROUND = 10;
+    // Max number of users displayed in leaderboard
+    static int SIZE_USERS = 20;
     // Max time per question
     static int MAX_TIME = 10;
     // Number of questions
@@ -32,7 +34,8 @@ class Constants {
         USERNAME,
         HOME,
         DISABLE,
-        ADD_SCORE
+        ADD_SCORE,
+        LEADERBOARD_CATEGORY
     }
     // Categories enum
     enum CATEGORIES {

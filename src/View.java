@@ -65,6 +65,7 @@ public class View extends JFrame {
                         }
 
                         GameTime timeLabel = new GameTime(Integer.toString(time), JLabel.CENTER);
+
                         if (time <= 3) {
                             timeLabel.setForeground(Color.RED);
                         } else if (time <= 7) {
@@ -104,19 +105,30 @@ public class View extends JFrame {
         userName = "";
         time = Constants.MAX_TIME + 1;
         progress = 0;
+
         screen = new JPanel();
+        screen.setBackground(Color.BLACK);
+
         progressBar = new JProgressBar();
         progressBar.setValue(progress);
+
         JButton start = new JButton("Start");
         start.setActionCommand(Constants.ACTIONS.START.name());
+
         JButton settings = new JButton("Settings");
         settings.setActionCommand(Constants.ACTIONS.SETTINGS.name());
 
+        JButton lb = new JButton("Leaderboard");
+        lb.setActionCommand(Constants.ACTIONS.LEADERBOARD.name());
+
         start.addActionListener(controller);
         settings.addActionListener(controller);
+        lb.addActionListener(controller);
 
         screen.add(start);
         screen.add(settings);
+        screen.add(lb);
+
 
         setTitle("Collage!");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -141,11 +153,13 @@ public class View extends JFrame {
         screen = new JPanel();
         JButton home = new JButton("Back");
         home.setActionCommand(Constants.ACTIONS.HOME.name());
+        screen.setBackground(Color.BLACK);
         home.addActionListener(controller);
         JButton time = new JButton(action);
 
         time.setActionCommand(Constants.ACTIONS.DISABLE.name());
         time.addActionListener(controller);
+
 
         screen.add(home);
         screen.add(time);
@@ -162,11 +176,14 @@ public class View extends JFrame {
             disabled = true;
             settings("Enable Timer");
             JLabel label = new JLabel("Timer disabled.");
+            label.setForeground(Color.WHITE);
+
             screen.add(label);
         } else {
             disabled = false;
             settings("Disable Timer");
             JLabel label = new JLabel("Timer enabled.");
+            label.setForeground(Color.WHITE);
             screen.add(label);
         }
         getContentPane().removeAll();
@@ -176,6 +193,7 @@ public class View extends JFrame {
 
     void initializeCategories() {
         screen = new JPanel();
+        screen.setBackground(Color.BLACK);
         JButton[] categories = new JButton[Constants.NUM_CATEGORIES];
         for (int i = 0; i < Constants.NUM_CATEGORIES; i++) {
             categories[i] = new JButton(Constants.CATEGORY_NAMES[i]);
@@ -211,11 +229,21 @@ public class View extends JFrame {
         int questionIndex = model.getCurrentCategory().getCurrent();
 
         JLabel questionLabel = new JLabel(Integer.toString(questionIndex + 1) + ". " + question.getQuestion(), JLabel.CENTER);
+
         screen.add(questionLabel);
 
+        int count = 0;
         for (Answer a : question.getAnswers()) {
             a.addActionListener(controller);
+            if (count <= 10)
+            {
+                questionLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
+                questionLabel.setForeground(Color.ORANGE);
+                screen.setBackground(Color.BLACK);
+                a.setForeground(Color.WHITE);
+            }
             screen.add(a);
+            count++;
         }
 
         screen.add(progressBar);
@@ -231,6 +259,7 @@ public class View extends JFrame {
     }
 
     void goToNextQuestion(Answer answer) {
+        answer.setForeground(Color.WHITE);
         if (answer.isCorrect()) {
             if (!disabled) {
                 int current_score = model.getScore().getTimerScore();
@@ -261,13 +290,22 @@ public class View extends JFrame {
             JLabel questionLabel = new JLabel(Integer.toString(questionIndex + 1) + ". " + question.getQuestion(), JLabel.CENTER);
             screen.add(questionLabel);
 
+            int count = 0;
             for (Answer a : question.getAnswers()) {
                 a.addActionListener(controller);
+                if (count <= 10) {
+                    questionLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
+                    questionLabel.setForeground(Color.ORANGE);
+                    screen.setBackground(Color.BLACK);
+                    a.setForeground(Color.WHITE);
+                }
+                count++;
                 screen.add(a);
             }
 
             progress += (100 / Constants.NUM_QUESTIONS_ROUND);
             progressBar.setValue(progress);
+
             screen.add(progressBar);
 
             GameTime timeLabel = new GameTime(Integer.toString(Constants.MAX_TIME), JLabel.CENTER);
@@ -290,6 +328,7 @@ public class View extends JFrame {
 
     private void displayScoreTable() {
         screen = new JPanel(new FlowLayout());
+        screen.setBackground(Color.BLACK);
 
         if (timer != null) {
             timer.stop();
@@ -299,6 +338,8 @@ public class View extends JFrame {
         String[][] data = new String[Constants.TABLE_ROWS][Constants.TABLE_COLS];
         String[] col = new String[]{"Question Number", "Question", "Score"};
         JTable table = new JTable(data, col);
+        table.setBackground(Color.BLACK);
+        table.setForeground(Color.YELLOW);
         int count = 0;
 
         for (int row = 0; row < data.length; row++) {
@@ -334,7 +375,7 @@ public class View extends JFrame {
         back.setActionCommand(Constants.ACTIONS.HOME.name());
         back.addActionListener(controller);
 
-        JButton userName = new JButton("Add Score to Leadership Board");
+        JButton userName = new JButton("Add Score to Leaderboard");
         userName.setActionCommand(Constants.ACTIONS.USERNAME.name());
         userName.addActionListener(controller);
 
@@ -349,8 +390,11 @@ public class View extends JFrame {
         JButton addUserScore = new JButton("Add My Score");
         addUserScore.setActionCommand(Constants.ACTIONS.ADD_SCORE.name());
         addUserScore.addActionListener(controller);
+
+        screen.setBackground(Color.BLACK);
         screen.add(userText);
         screen.add(addUserScore);
+
         getContentPane().removeAll();
         getContentPane().add(screen);
         revalidate();
@@ -406,24 +450,131 @@ public class View extends JFrame {
 
         screen = new JPanel();
 
+        screen.setBackground(Color.BLACK);
         JButton home = new JButton("Back");
         home.setActionCommand(Constants.ACTIONS.HOME.name());
         home.addActionListener(controller);
-
+        JButton lb = new JButton("Go To Leaderboard");
+        lb.setActionCommand(Constants.ACTIONS.LEADERBOARD.name());
+        lb.addActionListener(controller);
         JLabel scoreAdded = new JLabel("Your score has been added to the leaderboard!");
+        scoreAdded.setForeground(Color.WHITE);
 
         screen.add(home);
         screen.add(scoreAdded);
+        screen.add(lb);
 
         getContentPane().removeAll();
         getContentPane().add(screen);
         revalidate();
+    }
 
-        for (String s : leaderBoard.getLeaderBoard().keySet()) {
-            for (User u : leaderBoard.getUsersByCategory(s)) {
-                System.out.println(u.getUserName() + " " + u.getUserScore() + " " + u.getUserCategory());
-            }
+    void leaderBoardScreen(String category){
+        restartLeaderBoard();
+        String[] col = new String[]{"Username", "Score"};
+
+        switch (category) {
+            case "Start":
+                getContentPane().add(screen);
+                revalidate();
+                break;
+            default:
+                int size = category.equals("Overall") ? leaderBoard.getAllUsers().size() : leaderBoard.getUsersByCategory(category).size();
+                String[][] dataO = new String[Math.min(size, Constants.SIZE_USERS) + 1][2];
+                JTable tableO = new JTable(dataO, col);
+                for (int i = 0; i <= Math.min(size, Constants.SIZE_USERS); i++) {
+                    if (i == 0) {
+                        dataO[i][0] = "USERNAME";
+                        dataO[i][1] = "SCORE";
+                    } else {
+                        dataO[i][0] = category.equals("Overall") ? leaderBoard.getAllUsers().get(i - 1).getUserName() : leaderBoard.getUsersByCategory(category).get(i - 1).getUserName();
+                        dataO[i][1] = category.equals("Overall") ? Integer.toString(leaderBoard.getAllUsers().get(i - 1).getUserScore()) : Integer.toString(leaderBoard.getUsersByCategory(category).get(i - 1).getUserScore());
+                    }
+                }
+                tableO.getColumnModel().getColumn(0).setPreferredWidth(Constants.QUESTION_NUM_WIDTH);
+                tableO.getColumnModel().getColumn(1).setPreferredWidth(Constants.QUESTION_WIDTH);
+                tableO.setShowHorizontalLines(true);
+                tableO.setShowVerticalLines(true);
+
+                Color color;
+                switch (category) {
+                    case "Manga":
+                        color = Color.BLUE;
+                        break;
+                    case "Animals":
+                        color = Color.ORANGE;
+                        break;
+                    case "Music":
+                        color = Color.PINK;
+                        break;
+                    case "Vegan":
+                        color = Color.YELLOW;
+                        break;
+                    case "Random":
+                        color = Color.RED;
+                        break;
+                    case "Disney":
+                        color = Color.GREEN;
+                        break;
+                    default:
+                        color = Color.WHITE;
+                        break;
+                }
+                tableO.setGridColor(color);
+
+                tableO.setBackground(Color.BLACK);
+                tableO.setForeground(Color.YELLOW);
+                screen.add(tableO);
+                getContentPane().add(screen);
+                revalidate();
+                break;
         }
+    }
+
+    private void restartLeaderBoard() {
+        getContentPane().removeAll();
+        screen = new JPanel(new FlowLayout());
+        screen.setBackground(Color.BLACK);
+
+        JButton home = new JButton("Home");
+        home.setActionCommand(Constants.ACTIONS.HOME.name());
+        home.addActionListener(controller);
+        screen.add(home);
+
+        JButton overall = new JButton("Overall");
+        overall.setActionCommand(Constants.ACTIONS.LEADERBOARD_CATEGORY.name());
+        overall.addActionListener(controller);
+        screen.add(overall);
+
+        JButton random = new JButton(Constants.RANDOM);
+        random.setActionCommand(Constants.ACTIONS.LEADERBOARD_CATEGORY.name());
+        random.addActionListener(controller);
+        screen.add(random);
+
+        JButton music = new JButton(Constants.MUSIC);
+        music.setActionCommand(Constants.ACTIONS.LEADERBOARD_CATEGORY.name());
+        music.addActionListener(controller);
+        screen.add(music);
+
+        JButton animals = new JButton(Constants.ANIMALS);
+        animals.setActionCommand(Constants.ACTIONS.LEADERBOARD_CATEGORY.name());
+        animals.addActionListener(controller);
+        screen.add(animals);
+
+        JButton manga = new JButton(Constants.MANGA);
+        manga.setActionCommand(Constants.ACTIONS.LEADERBOARD_CATEGORY.name());
+        manga.addActionListener(controller);
+        screen.add(manga);
+
+        JButton disney = new JButton(Constants.DISNEY);
+        disney.setActionCommand(Constants.ACTIONS.LEADERBOARD_CATEGORY.name());
+        disney.addActionListener(controller);
+        screen.add(disney);
+
+        JButton vegan = new JButton(Constants.VEGAN);
+        vegan.setActionCommand(Constants.ACTIONS.LEADERBOARD_CATEGORY.name());
+        vegan.addActionListener(controller);
+        screen.add(vegan);
     }
 
     public static void main(String[] args) { View v = new View(); }

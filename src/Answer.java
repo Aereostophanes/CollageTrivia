@@ -20,7 +20,6 @@ class Answer extends JButton {
         setBorderPainted(false);
     }
 
-
     public String getAnswer() {
         return answer;
     }
